@@ -2,3 +2,78 @@ Microcontroll Bit Manipulation
 
 This is a simple C header file for manipulating bits in a microcontroller
 environment since it is a common task to create bit masks and shift bits around.
+
+
+MACROS
+The two simplest macros are BITV and NBITV.  These two left-shift a value by the
+designated number of bits and NBITV negates BITV (i.e., one's complement).
+
+The next macro is the GETMASK macro that creates a bitmask that is the specified
+number of bits wide.  For example, GETMASK(4) yields 0xF or 0b1111.
+
+The macro GETSHIFTMASK builds upon GETMASK by shifting the mask by the specified
+number of bits.  For example, GETSHIFTMASK(4, 3) yields 0x78 or 0b1111000.  To
+get the one's complement of GETSHIFTMASK use GETSHIFTMASKI.
+
+When dealing with "random" values (e.g., computed values, inputted values) then
+the widths of the values should be constrained to ensure that the space alloted
+for them are not exceeded.  MASKVALUE is the macro that takes the value, masks
+it, and shifts it to the correct location.  This ensures that a value that
+exceeds the desired width will not be exceed the desired width.  The similar
+macro UNMASKVALUE will extract a value from a larger value by masking and
+shifting it appropriately.
+
+It is common in microcontrollers to follow the read-modify-write paradigm where
+a value is read then modified then written back to where it was read from.  This
+paradigm permits changing of only the desired bits without changing the
+remainder of the bits that may be outside the scope of the specific operation
+being performed.  BITSET is a macro that reads a memory location and modifies
+that read value and returns it.
+
+The two final macros are quite specific to microcontrollers since general
+purpose processors do not rely on configurable memory locations for various
+processor controls like microcontrollers do.  REGGET and REGSET use all of the
+above macros to achieve this.  REGGET reads the value from a register and REGSET
+performs the read-modify-write.
+
+The ultimate goals of all of these macros is to simplify the end-code by
+specifying widths and values instead of performing bit arithmatic (shifting,
+etc.).
+
+
+PINS
+When configuring pin selection registers or any of the other multitude of
+pin-related operations, it is common to manipulate a register whose bit
+locations correspond to a I/O on a port.  Simple macros have also been defined
+to identify each pin on a 32-bit port as a PIN_XX macro (for XX=00 to 31).  This
+is basically a synonym to BITV from above but with a name more suitable to
+referencing pins.
+
+
+EXAMPLES
+This header file was originally written for the LPC-2138 ARM7TDMI
+microcontroller produced by NXP/Philips.  One register is the UART0 line control
+register (LCR).
+
+The register is defined:
+
+#define UART0_LCR (*((volatile unsigned long *) 0xE000C00C))
+
+This 32-bit register has six defined bit areas in the register.  One such is the
+word length that is the bits 2, 1, and 0.  I have defined the following
+utilizing the above REGGET and REGSET macros to easily understand what my code
+is configuring:
+
+#define UART0LCR_WL_GET             REGGET(UART0LCR, 2, 0)
+#define UART0LCR_WL_SET(val)        REGSET(UART0LCR, val, 2, 0)
+#define UART0LCR_WL_SET_5               UART0LCR_WL_SET(0)
+#define UART0LCR_WL_SET_6               UART0LCR_WL_SET(1)
+#define UART0LCR_WL_SET_7               UART0LCR_WL_SET(2)
+#define UART0LCR_WL_SET_8               UART0LCR_WL_SET(3)
+
+Seeing one of these macros in code makes it quite clear what register and what
+bit value is being read or written.  It is also done such that the math is not
+repeated by-hand at every location the register is accessed.
+
+
+
