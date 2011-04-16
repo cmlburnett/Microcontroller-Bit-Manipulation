@@ -1,0 +1,4 @@
+Microcontroll Bit Manipulation
+
+This is a simple C header file for manipulating bits in a microcontroller
+environment since it is a common task to create bit masks and shift bits around.
