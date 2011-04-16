@@ -17,9 +17,9 @@ get the one's complement of GETSHIFTMASK use GETSHIFTMASKI.
 
 When dealing with "random" values (e.g., computed values, inputted values) then
 the widths of the values should be constrained to ensure that the space alloted
-for them are not exceeded.  MASKVALUE is the macro that takes the value, masks
+for them is not exceeded.  MASKVALUE is the macro that takes the value, masks
 it, and shifts it to the correct location.  This ensures that a value that
-exceeds the desired width will not be exceed the desired width.  The similar
+exceeds the desired width will not exceed the desired width.  The similar
 macro UNMASKVALUE will extract a value from a larger value by masking and
 shifting it appropriately.
 
@@ -36,9 +36,10 @@ processor controls like microcontrollers do.  REGGET and REGSET use all of the
 above macros to achieve this.  REGGET reads the value from a register and REGSET
 performs the read-modify-write.
 
-The ultimate goals of all of these macros is to simplify the end-code by
+The ultimate goal of all of these macros is to simplify the end-code by
 specifying widths and values instead of performing bit arithmatic (shifting,
-etc.).
+etc.) inline.  This ensures consistency in the calculated values and permits
+relocating registers if necessary or if originally in error.
 
 
 PINS
