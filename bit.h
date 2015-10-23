@@ -1,7 +1,7 @@
 /*
  * bit.h -- Simple manipulation of bits for microcontrollers
  *
- * By Colin ML Burnett (Copyright 2011)
+ * By Colin ML Burnett (Copyright 2015)
  *
  * Licensed under Creative Commons Attributeion-ShareAlike 3.0 (CC BY-SA 3.0)
  * http://creativecommons.org/licenses/by-sa/3.0/
@@ -132,5 +132,9 @@
 #define PIN_29			BIT1(29)
 #define PIN_30			BIT1(30)
 #define PIN_31			BIT1(31)
+
+// Combine multiple bytes into one
+#define COMBINE_8TO16(buf, offset) ( ((uint16_t)buf[offset] << 8) | (uint16_t)buf[offset+1] )
+#define COMBINE_8TO32(buf, offset) ( ((uint32_t)buf[offset] << 24) | ((uint32_t)buf[offset+1] << 16) | ((uint32_t)buf[offset+2] << 8) | (uint32_t)buf[offset+3] )
 
 #endif /* BIT_H_ */
